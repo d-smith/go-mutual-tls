@@ -6,8 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"net/http"
-
-	"github.com/levigross/grequests"
 )
 
 func main() {
@@ -30,15 +28,32 @@ func main() {
 	}
 
 	tlsConfig.BuildNameToCertificate()
-	ro := &grequests.RequestOptions{
+
+	client := &http.Client{
+		Transport: &http.Transport{TLSClientConfig: tlsConfig},
+	}
+
+	resp, err := client.Get("https://localhost:8080")
+
+	/*ro := &grequests.RequestOptions{
 		HTTPClient: &http.Client{
 			Transport: &http.Transport{TLSClientConfig: tlsConfig},
 		},
 	}
 	resp, err := grequests.Get("https://localhost:8080", ro)
+	*/
 	if err != nil {
 		log.Println("Unable to speak to our server", err)
+		return
 	}
 
-	log.Println(resp.String())
+	defer resp.Body.Close()
+
+	bytes,err := ioutil.ReadAll(resp.Body)
+	if err != nil {
+		log.Println("Unable to read the response", err)
+		return
+	}
+
+	log.Println(string(bytes))
 }
