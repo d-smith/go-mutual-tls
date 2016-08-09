@@ -34,14 +34,6 @@ func main() {
 	}
 
 	resp, err := client.Get("https://localhost:8080")
-
-	/*ro := &grequests.RequestOptions{
-		HTTPClient: &http.Client{
-			Transport: &http.Transport{TLSClientConfig: tlsConfig},
-		},
-	}
-	resp, err := grequests.Get("https://localhost:8080", ro)
-	*/
 	if err != nil {
 		log.Println("Unable to speak to our server", err)
 		return
